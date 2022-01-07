@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(tidyverse)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -45,19 +46,33 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
     
-    
-
-    output$contents <- renderTable({
+    # data set
+    data_set <- eventReactive(input$datafile,{
         file <- input$datafile
         ext <- tools::file_ext(file$datapath)
         req(file)
         validate(need(ext == "csv", "Upload dataset"))
-
-        df <- read.csv(file$datapath, header = input$header)
         
+        df <- read.csv(file$datapath, header = input$header)
+        return(df)
+    })
+    
+    library(readr)
+    micro_dataset <- read_csv("data/micro-dataset.csv")
+    micro_dataset$X1 <- NULL
+
+
+    output$contents <- renderTable({
+        
+        #df <- dataset()
+        df <- micro_dataset
         vars <- names(df)
+        # eerste colom is case_id
+        case_id <- vars[1]
+        # laatste colom is target
+        target <- tail(vars)[1]
         # Update select input immediately after clicking on the action button. 
-        updateSelectInput(session, "m.target","Select target", choices = vars)
+        updateSelectInput(session, "m.target","Select target", choices = vars, selected = vars[1])
         updateSelectInput(session, "m.inputs","Select inputs", choices = vars)
         
         df
