@@ -38,3 +38,5 @@ summary(as.factor(df$letter_huurdersoordeel_letters_3_klasse_2021))
 df <- df %>% filter(letter_huurdersoordeel_letters_3_klasse_2021 %in% c('A','B','C'))
 
 write.csv(df,'./data/micro-dataset.csv')
+
+
